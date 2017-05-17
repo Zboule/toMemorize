@@ -1,10 +1,7 @@
 
-/**
- * @file	Service to manage app folder
- * @author	Jordane CURÉ
- */
-
 import { Injectable } from '@angular/core'
+
+import { Observable, Subscriber } from 'rxjs'
 
 import { Folder } from '../entities/folder'
 import { FOLDERS } from '../mocks/mock'
@@ -21,9 +18,38 @@ export class FoldersService {
         //
     }
 
-    public getFolders(): Folder[] {
-        return undefined
+    public getFolders() {
+
+        return this.firebaseDatabaseService.getDatabaseUserReference('/folders')
+            .map((dbInstance) => Observable.fromPromise(dbInstance.once('value')))
+            .toPromise()
+
+
+
+        /*
+        let subscriber
+        return new Observable<Folder[]>(
+            (subscriber) => {
+
+                this.firebaseDatabaseService.getDatabaseUserReference('/folders')
+                    .map((dbInstance) => dbInstance.once('value'))
+                    .subscribe(snapShot => snapshot.val())
+
+                    .subscribe(
+                    (dbInstance) => {
+                        dbInstance.once('value').then(
+                            (snapshot) => {
+                                console.log(snapshot)
+                                console.log(snapshot.val())
+                            }
+                        )
+                    }
+                    )
+            }
+        )
+         */
     }
+
 
     public writeFolder() {
         this.firebaseDatabaseService.getDatabaseUserReference().subscribe(
